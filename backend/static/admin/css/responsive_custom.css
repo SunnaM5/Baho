@@ -1,0 +1,72 @@
+/* Custom Responsive Django Admin Overrides for BAHO MARKET */
+
+@media (max-width: 768px) {
+  /* Fluid container & header */
+  #header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 15px;
+    height: auto;
+  }
+  #branding h1 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  #user-tools {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    word-break: break-word;
+  }
+
+  /* Responsive Admin Content */
+  #content {
+    padding: 12px 10px !important;
+  }
+
+  /* Changelist Table Horizontal Scroll Box */
+  #changelist #changelist-form {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #changelist table {
+    width: 100% !important;
+    min-width: 600px;
+  }
+
+  /* Admin Form Fieldsets */
+  .module fieldset .form-row {
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  .module fieldset .form-row label {
+    width: 100% !important;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+
+  .module fieldset .form-row input[type="text"],
+  .module fieldset .form-row input[type="number"],
+  .module fieldset .form-row input[type="email"],
+  .module fieldset .form-row input[type="url"],
+  .module fieldset .form-row select,
+  .module fieldset .form-row textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Inline Formsets */
+  .inline-group {
+    overflow-x: auto;
+  }
+
+  /* Filter Sidebar on Mobile */
+  #changelist-filter {
+    position: static;
+    width: 100% !important;
+    margin-top: 15px;
+    box-sizing: border-box;
+  }
+}

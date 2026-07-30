@@ -1,0 +1,372 @@
+'use client'
+
+import React, { createContext, useContext, useState, useEffect } from 'react'
+
+type Language = 'ru' | 'uz' | 'en'
+
+interface LanguageContextType {
+  lang: Language
+  setLang: (lang: Language) => void
+  t: (key: string) => string
+}
+
+const translations: Record<Language, Record<string, string>> = {
+  ru: {
+    smartphones: 'Смартфоны',
+    iphones: 'iPhones',
+    samsung: 'Samsung',
+    xiaomi: 'Xiaomi',
+    laptops: 'Ноутбуки',
+    tablets: 'Планшеты',
+    headphones: 'Наушники',
+    accessories: 'Аксессуары',
+    searchPlaceholder: 'Поиск смартфонов, ноутбуков...',
+    wishlist: 'Избранное',
+    cart: 'Корзина',
+    deliveryNote: 'Доставка по всему Узбекистану',
+    support24: 'Поддержка 24/7',
+    installmentBadge: 'Рассрочка 0-0-12',
+    installmentText: 'Без первоначального взноса и переплат до 12 месяцев',
+    originalBadge: '100% Оригинал',
+    originalText: 'Официальная гарантия от производителя до 2 лет',
+    fastDelivery: 'Быстрая доставка',
+    fastDeliveryText: 'Бесплатная курьерская доставка по всему Ташкенту',
+    tradeIn: 'Выгодный Trade-In',
+    tradeInText: 'Обменяйте старый смартфон на новый с доплатой',
+    categoriesTitle: 'Категории',
+    catalogTitle: 'Каталог электроники',
+    catalogDesc: 'Самые популярные и хит-продаж устройства по лучшим ценам',
+    all: 'Все',
+    popularBrands: 'Официальные бренды',
+    sum: 'сум',
+    footerSlogan: 'Официальный магазин техники в Узбекистане',
+    footerCatalog: 'Каталог',
+    footerCompany: 'Компания',
+    footerContacts: 'Контакты',
+    aboutUs: 'О нас',
+    branches: 'Филиалы',
+    installmentsMenu: 'Рассрочка',
+    deliveryMenu: 'Доставка',
+    returnMenu: 'Возврат и обмен',
+    callUs: 'Позвонить нам',
+    noProductsFound: 'По этой категории пока нет добавленных товаров в базе.',
+    showAllProducts: 'Показать все товары',
+    loadingCatalog: 'Загрузка каталога товаров...',
+    rightsReserved: 'Все права защищены.',
+    
+    // Deals of the Day
+    dealsOfDayTitle: 'Скидки дня',
+    dealsOfDaySubtitle: 'Ограниченные по времени предложения на премиум технику',
+    viewAllDeals: 'Смотреть все скидки',
+    loadingDeals: 'Загрузка горячих скидок...',
+    
+    // Installments block translations
+    installmentsTitle: 'Гибкие условия рассрочки',
+    installmentsSubtitle: 'Купите технику мечты без переплат с рассрочкой от 0%',
+    calcTitle: 'Рассчитайте ежемесячный платеж',
+    devicePrice: 'Стоимость устройства',
+    paymentDuration: 'Срок рассрочки (месяцы)',
+    monthlyPaymentLabel: 'Ежемесячный платеж:',
+    totalAmountLabel: 'Итоговая сумма:',
+    interestLabel: 'Переплата:',
+    getPlanBtn: 'Оформить рассрочку',
+    zeroInterestTitle: '0% Переплат',
+    zeroInterestDesc: 'На выделенные тарифы 3-6 месяцев',
+    flexibleTermsTitle: 'Гибкие сроки',
+    flexibleTermsDesc: 'От 3 до 12 месяцев на выбор',
+    instantApprovalTitle: 'Мгновенное одобрение',
+    instantApprovalDesc: 'Одобрение за несколько минут',
+    monthSuffix: 'мес.',
+    chooseProductsBtn: 'Перейти к выбору товаров',
+
+    // Why Us block translations
+    whyUsTitle: 'Почему выбирают BAHO MARKET',
+    whyUsSubtitle: 'Премиум сервис, гарантированное качество и забота о каждом клиенте',
+    fastDeliveryTitle: 'Быстрая доставка',
+    fastDeliveryDesc: 'Доставим ваш заказ по Ташкенту за 2-3 часа',
+    officialWarrantyTitle: 'Официальная гарантия',
+    officialWarrantyDesc: '100% оригинальная продукция с гарантией',
+    easyReturnTitle: 'Легкий возврат',
+    easyReturnDesc: 'Возврат и обмен товара в течение 14 дней',
+    support247Title: 'Служба поддержки 24/7',
+    support247Desc: 'Всегда на связи для решения любых вопросов',
+
+    // Trade-In block translations
+    tradeInSectionTitle: 'Обменяйте старый девайс на новый',
+    tradeInSectionSubtitle: 'Сэкономьте до 70% от стоимости нового устройства по программе Trade-In',
+    calcOldDevice: 'Оценить старое устройство',
+    selectBrand: 'Выберите бренд',
+    selectModel: 'Выберите модель',
+    estValue: 'Ориентировочная скидка:',
+    // Product Detail Page
+    breadcrumbHome: 'Главная',
+    breadcrumbCatalog: 'Каталог',
+    cashPrice: 'Цена за наличный расчет',
+    inInstallmentFor: 'В рассрочку на 12 мес',
+    memoryXotira: 'ПАМЯТЬ (XOTIRA):',
+    simConfig: 'КОНФИГУРАЦИЯ SIM:',
+    colorRang: 'ЦВЕТ (RANG):',
+    selectTerm: 'ВЫБЕРИТЕ СРОК РАССРОЧКИ (МЕСЯЦЫ):',
+    monthlyPaymentShort: 'Ежемесячный платеж:',
+    quantity: 'КОЛИЧЕСТВО:',
+    addToCart: 'В корзину',
+    quickOrder: 'ОФОРМИТЬ В РАССРОЧКУ ЗА 1 МИНУТУ',
+    officialWarrantyShort: 'Официальная гарантия 12 мес',
+    deliveryInHours: 'Доставка за 2-3 часа',
+    tradeInExchange: 'Trade-In обмен',
+    descAndSpecs: 'Описание и характеристики',
+    manufacturer: 'Производитель:',
+    selectedColorLabel: 'Выбранный цвет:',
+    memoryCapacityLabel: 'Объем памяти:',
+    warrantyLabel: 'Гарантия:',
+    yearOfficial: '1 год официальная',
+  },
+  uz: {
+    smartphones: 'Smartfonlar',
+    iphones: 'iPhones',
+    samsung: 'Samsung',
+    xiaomi: 'Xiaomi',
+    laptops: 'Noutbuklar',
+    tablets: 'Planshetlar',
+    headphones: 'Quloqchinlar',
+    accessories: 'Aksessuarlar',
+    searchPlaceholder: 'Smartfonlar, noutbuklar qidiruvi...',
+    wishlist: 'Saralanganlar',
+    cart: 'Savat',
+    deliveryNote: 'Butun Oʻzbekiston boʻylab yetkazib berish',
+    support24: '24/7 Qoʻllab-quvvatlash',
+    installmentBadge: 'Boʻlib toʻlash 0-0-12',
+    installmentText: 'Boshlangʻich toʻlovsiz 12 oygacha boʻlib toʻlash',
+    originalBadge: '100% Asl mahsulot',
+    originalText: 'Ishlab chiqaruvchidan 2 yilgacha rasmiy kafolat',
+    fastDelivery: 'Tezkor yetkazib berish',
+    fastDeliveryText: 'Toshkent boʻylab bepul kuryerlik xizmati',
+    tradeIn: 'Foydali Trade-In',
+    tradeInText: 'Eski smartfoningizni yangisiga almashtiring',
+    categoriesTitle: 'Kategoriyalar',
+    catalogTitle: 'Elektronika katalogi',
+    catalogDesc: 'Eng ommabop va xaridorgir qurilmalar eng hamyonbop narxlarda',
+    all: 'Barchasi',
+    popularBrands: 'Rasmiy brendlar',
+    sum: 'soʻm',
+    footerSlogan: 'Oʻzbekistondagi rasmiy texnika doʻkoni',
+    footerCatalog: 'Katalog',
+    footerCompany: 'Kompaniya',
+    footerContacts: 'Kontaktlar',
+    aboutUs: 'Biz haqimizda',
+    branches: 'Filiallar',
+    installmentsMenu: 'Boʻlib toʻlash',
+    deliveryMenu: 'Yetkazib berish',
+    returnMenu: 'Qaytarish va almashtirish',
+    callUs: 'Qoʻngʻiroq qilish',
+    noProductsFound: 'Ushbu kategoriya boʻyicha hozircha mahsulotlar yoʻq.',
+    showAllProducts: 'Barcha mahsulotlarni koʻrsatish',
+    loadingCatalog: 'Katalog yuklanmoqda...',
+    rightsReserved: 'Barcha huquqlar himoyalangan.',
+
+    // Deals of the Day
+    dealsOfDayTitle: 'Kunning chegirmalari',
+    dealsOfDaySubtitle: 'Premiun texnikalarga cheklangan vaqtdagi maxsus takliflar',
+    viewAllDeals: 'Barcha chegirmalarni koʻrish',
+    loadingDeals: 'Chegirmalar yuklanmoqda...',
+
+    // Installments block translations
+    installmentsTitle: 'Qulay boʻlib toʻlash shartlari',
+    installmentsSubtitle: 'Orzuingizdagi texnikani 0% stavka bilan xarid qiling',
+    calcTitle: 'Oylik toʻlovni hisoblang',
+    devicePrice: 'Qurilma narxi',
+    paymentDuration: 'Boʻlib toʻlash muddati (oy)',
+    monthlyPaymentLabel: 'Oylik toʻlov:',
+    totalAmountLabel: 'Jami summa:',
+    interestLabel: 'Ustama toʻlov:',
+    getPlanBtn: 'Boʻlib toʻlashni rasmiylashtirish',
+    zeroInterestTitle: '0% Ustamasiz',
+    zeroInterestDesc: '3-6 oylik tanlangan tariflar uchun',
+    flexibleTermsTitle: 'Moslashuvchan muddatlar',
+    flexibleTermsDesc: '3 oydan 12 oygacha tanlov imkoniyati',
+    instantApprovalTitle: 'Zudlik bilan tasdiqlash',
+    instantApprovalDesc: 'Bir necha daqiqa ichida tasdiqlash',
+    monthSuffix: 'oy',
+    chooseProductsBtn: 'Mahsulotlar tanloviga oʻtish',
+
+    // Why Us block translations
+    whyUsTitle: 'Nega aynan BAHO MARKET',
+    whyUsSubtitle: 'Aʼlo darajadagi servis, kafolatlangan sifat va har bir mijozga gʻamxoʻrlik',
+    fastDeliveryTitle: 'Tezkor yetkazib berish',
+    fastDeliveryDesc: 'Buyurtmangizni Toshkent boʻylab 2-3 soatda yetkazamiz',
+    officialWarrantyTitle: 'Rasmiy kafolat',
+    officialWarrantyDesc: '100% asl mahsulotlar kafolat bilan',
+    easyReturnTitle: 'Oson qaytarish',
+    easyReturnDesc: 'Mahsulotni 14 kun ichida qaytarish yoki almashtirish',
+    support247Title: '24/7 Qoʻllab-quvvatlash',
+    support247Desc: 'Barcha savollaringiz boʻyicha har doim aloqadamiz',
+
+    // Trade-In block translations
+    tradeInSectionTitle: 'Eski qurilmangizni yangisiga almashtiring',
+    tradeInSectionSubtitle: 'Trade-In dasturi orqali yangi qurilma narxidan 70% gacha tejang',
+    calcOldDevice: 'Eski qurilmani baholash',
+    selectBrand: 'Brendni tanlang',
+    selectModel: 'Modelni tanlang',
+    estValue: 'Taxminiy chegirma:',
+    applyTradeIn: 'Trade-In uchun ariza topshirish',
+    // Product Detail Page
+    breadcrumbHome: 'Bosh sahifa',
+    breadcrumbCatalog: 'Katalog',
+    cashPrice: 'Naqd pulga xarid narxi',
+    inInstallmentFor: '12 oyga boʻlib toʻlashga',
+    memoryXotira: 'XOTIRA:',
+    simConfig: 'SIM KONFIGURATSIYASI:',
+    colorRang: 'RANG:',
+    selectTerm: 'BOʻLIB TOʻLASH MUDDATINI TANLANG (OYLAR):',
+    monthlyPaymentShort: 'Oylik toʻlov:',
+    quantity: 'MIQDORI:',
+    addToCart: 'Savatga qoʻshish',
+    quickOrder: '1 DAQIQADA BOʻLIB TOʻLASHGA RASMIYLASHTIRISH',
+    officialWarrantyShort: 'Rasmiy kafolat 12 oy',
+    deliveryInHours: 'Yetkazib berish 2-3 soatda',
+    tradeInExchange: 'Trade-In almashtirish',
+    descAndSpecs: 'Tavsif va xususiyatlar',
+    manufacturer: 'Ishlab chiqaruvchi:',
+    selectedColorLabel: 'Tanlangan rang:',
+    memoryCapacityLabel: 'Xotira hajmi:',
+    warrantyLabel: 'Kafolat:',
+    yearOfficial: '1 yil rasmiy',
+  },
+  en: {
+    smartphones: 'Smartphones',
+    iphones: 'iPhones',
+    samsung: 'Samsung',
+    xiaomi: 'Xiaomi',
+    laptops: 'Laptops',
+    tablets: 'Tablets',
+    headphones: 'Headphones',
+    accessories: 'Accessories',
+    searchPlaceholder: 'Search smartphones, laptops...',
+    wishlist: 'Wishlist',
+    cart: 'Cart',
+    deliveryNote: 'Delivery across all Uzbekistan',
+    support24: 'Support 24/7',
+    installmentBadge: '0-0-12 Installments',
+    installmentText: 'Zero down payment & zero interest up to 12 months',
+    originalBadge: '100% Original',
+    originalText: 'Official manufacturer warranty up to 2 years',
+    fastDelivery: 'Fast Delivery',
+    fastDeliveryText: 'Free courier delivery across Tashkent',
+    tradeIn: 'Profitable Trade-In',
+    tradeInText: 'Exchange your old smartphone for a new one',
+    categoriesTitle: 'Categories',
+    catalogTitle: 'Electronics Catalog',
+    catalogDesc: 'Most popular bestseller devices at unbeatable prices',
+    all: 'All',
+    popularBrands: 'Official Brands',
+    sum: 'sum',
+    footerSlogan: 'Official electronics store in Uzbekistan',
+    footerCatalog: 'Catalog',
+    footerCompany: 'Company',
+    footerContacts: 'Contacts',
+    aboutUs: 'About Us',
+    branches: 'Branches',
+    installmentsMenu: 'Installments',
+    deliveryMenu: 'Delivery',
+    returnMenu: 'Returns & Exchange',
+    callUs: 'Call Us',
+    noProductsFound: 'No products added in this category yet.',
+    showAllProducts: 'Show All Products',
+    loadingCatalog: 'Loading catalog...',
+    rightsReserved: 'All rights reserved.',
+
+    // Installments block translations
+    installmentsTitle: 'Flexible Payment Plans',
+    installmentsSubtitle: 'Make your dream device affordable with 0% APR installment options',
+    calcTitle: 'Calculate Your Payment',
+    devicePrice: 'Device Price',
+    paymentDuration: 'Payment Duration (months)',
+    monthlyPaymentLabel: 'Monthly Payment:',
+    totalAmountLabel: 'Total Amount:',
+    interestLabel: 'Interest:',
+    getPlanBtn: 'Get This Payment Plan',
+    zeroInterestTitle: '0% Interest',
+    zeroInterestDesc: 'On selected 3-6 month plans',
+    flexibleTermsTitle: 'Flexible Terms',
+    flexibleTermsDesc: 'From 3 to 36 months to choose',
+    instantApprovalTitle: 'Instant Approval',
+    instantApprovalDesc: 'Get approved in minutes',
+
+    // Why Us block translations
+    whyUsTitle: 'Why Choose BAHO MARKET',
+    whyUsSubtitle: 'Premium service, guaranteed quality, and care for every customer',
+    fastDeliveryTitle: 'Fast Delivery',
+    fastDeliveryDesc: 'We deliver your order across Tashkent in 2-3 hours',
+    officialWarrantyTitle: 'Official Warranty',
+    officialWarrantyDesc: '100% original products with official warranty',
+    easyReturnTitle: 'Easy Returns',
+    easyReturnDesc: 'Return and exchange products within 14 days',
+    support247Title: '24/7 Customer Support',
+    support247Desc: 'Always available to resolve any questions',
+
+    // Trade-In block translations
+    tradeInSectionTitle: 'Trade In Your Old Device',
+    tradeInSectionSubtitle: 'Save up to 70% on a new device with our Trade-In program',
+    calcOldDevice: 'Estimate Old Device',
+    selectBrand: 'Select Brand',
+    selectModel: 'Select Model',
+    estValue: 'Estimated Discount:',
+    applyTradeIn: 'Apply for Trade-In',
+    // Product Detail Page
+    breadcrumbHome: 'Home',
+    breadcrumbCatalog: 'Catalog',
+    cashPrice: 'Cash Price',
+    inInstallmentFor: '12 Month Installment',
+    memoryXotira: 'MEMORY:',
+    simConfig: 'SIM CONFIGURATION:',
+    colorRang: 'COLOR:',
+    selectTerm: 'SELECT INSTALLMENT TERM (MONTHS):',
+    monthlyPaymentShort: 'Monthly payment:',
+    quantity: 'QUANTITY:',
+    addToCart: 'Add to Cart',
+    quickOrder: 'BUY IN INSTALLMENT IN 1 MINUTE',
+    officialWarrantyShort: 'Official 12 Months Warranty',
+    deliveryInHours: 'Delivery in 2-3 hours',
+    tradeInExchange: 'Trade-In exchange',
+    descAndSpecs: 'Description & Specifications',
+    manufacturer: 'Manufacturer:',
+    selectedColorLabel: 'Selected Color:',
+    memoryCapacityLabel: 'Memory Capacity:',
+    warrantyLabel: 'Warranty:',
+    yearOfficial: '1 year official',
+  },
+}
+
+const LanguageContext = createContext<LanguageContextType>({
+  lang: 'ru',
+  setLang: () => {},
+  t: (key) => key,
+})
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [lang, setLangState] = useState<Language>('ru')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('lang') as Language
+    if (saved && ['ru', 'uz', 'en'].includes(saved)) {
+      setLangState(saved)
+    }
+  }, [])
+
+  const setLang = (newLang: Language) => {
+    setLangState(newLang)
+    localStorage.setItem('lang', newLang)
+  }
+
+  const t = (key: string): string => {
+    return translations[lang]?.[key] || translations['ru']?.[key] || key
+  }
+
+  return (
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
+      {children}
+    </LanguageContext.Provider>
+  )
+}
+
+export const useLanguage = () => useContext(LanguageContext)
