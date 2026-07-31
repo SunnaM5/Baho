@@ -6,10 +6,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ApiService } from '@/lib/api'
 
+import { useLanguage } from '@/context/language-context'
+
 interface ProductCardProps {
   product: {
     id: string
     name: string
+    name_uz?: string
+    name_en?: string
     brand?: { name: string } | string
     base_price?: number | string
     price?: number
@@ -26,21 +30,28 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const { lang, t } = useLanguage()
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAdded, setIsAdded] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+
+  const productName = (lang === 'uz' && product.name_uz)
+    ? product.name_uz
+    : (lang === 'en' && product.name_en)
+    ? product.name_en
+    : product.name
 
   const rawPrice = Number(product.base_price || product.price || 0)
   const brandName = typeof product.brand === 'object' ? product.brand?.name : product.brand || 'BAHO'
   const imageUrl = (product as any).main_image || product.images?.[0]?.image || product.image || 'https://images.unsplash.com/photo-1592286927505-1def25115558?w=500'
   const inStock = product.stock !== undefined ? product.stock > 0 : product.inStock ?? true
 
-  const formattedPrice = new Intl.NumberFormat('en-US').format(rawPrice)
+  const formattedPrice = new Intl.NumberFormat('ru-RU').format(rawPrice)
   const numericDiscountedPrice = product.discount
     ? Math.round(rawPrice * (1 - product.discount / 100))
     : rawPrice
-  const discountedPrice = new Intl.NumberFormat('en-US').format(numericDiscountedPrice)
-  const monthlyPayment = new Intl.NumberFormat('en-US').format(Math.round(numericDiscountedPrice / 12))
+  const discountedPrice = new Intl.NumberFormat('ru-RU').format(numericDiscountedPrice)
+  const monthlyPayment = new Intl.NumberFormat('ru-RU').format(Math.round(numericDiscountedPrice / 12))
 
   // Instant Optimistic Toggle for Wishlist
   const handleToggleWishlist = async () => {
@@ -80,7 +91,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link href={`/product/${product.id}`} className="relative h-40 sm:h-56 md:h-64 overflow-hidden bg-gradient-to-b from-slate-50 to-emerald-50/30 flex items-center justify-center p-2 sm:p-4">
         <motion.img
           src={imageUrl}
-          alt={product.name}
+          alt={productName}
           className="w-full h-full object-contain drop-shadow-md"
           animate={{ scale: isHovered ? 1.08 : 1 }}
           transition={{ duration: 0.3 }}
@@ -124,7 +135,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {!inStock && (
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-10">
             <span className="bg-white/90 text-slate-800 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
-              Нет в наличии
+              {lang === 'uz' ? 'Mavjud emas' : lang === 'en' ? 'Out of stock' : 'Нет в наличии'}
             </span>
           </div>
         )}
@@ -135,13 +146,13 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="flex items-center justify-between text-[10px] sm:text-xs text-emerald-700 font-bold uppercase tracking-wider mb-1">
           <span>{brandName}</span>
           <span className="hidden sm:flex text-slate-400 text-[11px] items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Гарантия 1 год
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> {t('warrantyOneYear')}
           </span>
         </div>
 
         <Link href={`/product/${product.id}`}>
           <h3 className="font-semibold text-slate-900 text-xs sm:text-base leading-tight sm:leading-snug mb-1.5 sm:mb-2 line-clamp-2 group-hover:text-emerald-700 transition-colors cursor-pointer">
-            {product.name}
+            {productName}
           </h3>
         </Link>
 
@@ -166,9 +177,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Installment Highlight Box */}
         <div className="bg-emerald-50/70 border border-emerald-200/60 rounded-xl p-2.5 mb-3 flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-emerald-800">Рассрочка:</span>
+          <span className="text-[11px] font-semibold text-emerald-800">{t('installmentLabel')}</span>
           <span className="text-xs font-bold text-emerald-900">
-            от {monthlyPayment} сум/мес
+            {t('fromPrefix')} {monthlyPayment} {t('sum')}/{t('monthShort')}
           </span>
         </div>
 
@@ -177,11 +188,11 @@ export function ProductCard({ product }: ProductCardProps) {
           <div>
             {product.discount && (
               <span className="block text-xs text-slate-400 line-through font-medium">
-                {formattedPrice} сум
+                {formattedPrice} {t('sum')}
               </span>
             )}
             <span className="text-lg font-extrabold text-slate-900 leading-none">
-              {discountedPrice} <span className="text-xs font-semibold text-slate-500">сум</span>
+              {discountedPrice} <span className="text-xs font-semibold text-slate-500">{t('sum')}</span>
             </span>
           </div>
 

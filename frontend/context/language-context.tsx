@@ -120,6 +120,10 @@ const translations: Record<Language, Record<string, string>> = {
     memoryCapacityLabel: 'Объем памяти:',
     warrantyLabel: 'Гарантия:',
     yearOfficial: '1 год официальная',
+    warrantyOneYear: 'Гарантия 1 год',
+    installmentLabel: 'Рассрочка:',
+    fromPrefix: 'от',
+    monthShort: 'мес',
   },
   uz: {
     smartphones: 'Smartfonlar',
@@ -231,6 +235,10 @@ const translations: Record<Language, Record<string, string>> = {
     memoryCapacityLabel: 'Xotira hajmi:',
     warrantyLabel: 'Kafolat:',
     yearOfficial: '1 yil rasmiy',
+    warrantyOneYear: '1 yil kafolat',
+    installmentLabel: 'Boʻlib toʻlash:',
+    fromPrefix: 'dan',
+    monthShort: 'oy',
   },
   en: {
     smartphones: 'Smartphones',
@@ -334,6 +342,10 @@ const translations: Record<Language, Record<string, string>> = {
     memoryCapacityLabel: 'Memory Capacity:',
     warrantyLabel: 'Warranty:',
     yearOfficial: '1 year official',
+    warrantyOneYear: '1 year warranty',
+    installmentLabel: 'Installment:',
+    fromPrefix: 'from',
+    monthShort: 'mo',
   },
 }
 
