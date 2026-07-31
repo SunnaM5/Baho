@@ -32,7 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const rawPrice = Number(product.base_price || product.price || 0)
   const brandName = typeof product.brand === 'object' ? product.brand?.name : product.brand || 'BAHO'
-  const imageUrl = product.images?.[0]?.image || product.image || 'https://images.unsplash.com/photo-1592286927505-1def25115558?w=500'
+  const imageUrl = (product as any).main_image || product.images?.[0]?.image || product.image || 'https://images.unsplash.com/photo-1592286927505-1def25115558?w=500'
   const inStock = product.stock !== undefined ? product.stock > 0 : product.inStock ?? true
 
   const formattedPrice = new Intl.NumberFormat('en-US').format(rawPrice)
