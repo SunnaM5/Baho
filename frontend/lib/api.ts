@@ -11,30 +11,43 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}, isRe
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        ...defaultHeaders,
+        ...options.headers,
+      },
+    });
 
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    
-    // If token is invalid or expired, clear it and retry public endpoints without token
-    if (res.status === 401 && token && !isRetry) {
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      
+      // If token is invalid or expired, clear it and retry public endpoints without token
+      if (res.status === 401 && token && !isRetry) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+        }
+        return fetchAPI(endpoint, options, true);
+      }
+
+      throw new Error(errorData.detail || errorData.message || `API error: ${res.status}`);
+    }
+
+    return res.json();
+  } catch (err: any) {
+    if (!isRetry && token) {
+      // Retry without auth token if initial auth request failed network
       if (typeof window !== 'undefined') {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
       }
       return fetchAPI(endpoint, options, true);
     }
-
-    throw new Error(errorData.detail || errorData.message || `API error: ${res.status}`);
+    console.warn(`[API] ${endpoint} request failed:`, err.message || err);
+    throw err;
   }
-
-  return res.json();
 }
 
 // API Services
