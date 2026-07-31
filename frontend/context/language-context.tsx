@@ -283,6 +283,12 @@ const translations: Record<Language, Record<string, string>> = {
     loadingCatalog: 'Loading catalog...',
     rightsReserved: 'All rights reserved.',
 
+    // Deals of the Day
+    dealsOfDayTitle: 'Deals of the Day',
+    dealsOfDaySubtitle: 'Limited time offers on premium electronics',
+    viewAllDeals: 'View all deals',
+    loadingDeals: 'Loading hot deals...',
+
     // Installments block translations
     installmentsTitle: 'Flexible Payment Plans',
     installmentsSubtitle: 'Make your dream device affordable with 0% APR installment options',
