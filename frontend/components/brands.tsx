@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ApiService } from '@/lib/api'
+import { useLanguage } from '@/context/language-context'
 
 interface BrandItem {
   id: string
@@ -42,6 +42,7 @@ const HonorIcon = () => (
 )
 
 export function Brands() {
+  const { t } = useLanguage()
   const [brands, setBrands] = useState<BrandItem[]>([])
 
   useEffect(() => {
@@ -101,7 +102,7 @@ export function Brands() {
 
       <div className="max-w-7xl mx-auto px-4 mb-4 text-center">
         <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
-          Официальные бренды
+          {t('popularBrands')}
         </span>
       </div>
 
