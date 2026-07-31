@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLanguage } from '@/context/language-context'
+import { ApiService } from '@/lib/api'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 interface BrandItem {
   id: string
